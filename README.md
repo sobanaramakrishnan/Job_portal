@@ -85,7 +85,7 @@ git push -u origin main
 web: gunicorn app:app
 ```
 
-> Make sure your Flask app is in `app.py` and the instance is called `app`.
+
 
 #### `requirements.txt`:
 
