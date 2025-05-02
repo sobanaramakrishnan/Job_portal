@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employer Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h2>Welcome, Employer!</h2>
+
+    <!-- Job Posting Form -->
+    <form method="POST" class="mb-4">
+        <div class="mb-3">
+            <input type="text" name="title" class="form-control" placeholder="Job Title" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="category" class="form-control" placeholder="Category" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="location" class="form-control" placeholder="Location" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="salary" class="form-control" placeholder="Salary" required>
+        </div>
+        <div class="mb-3">
+            <textarea name="description" class="form-control" placeholder="Job Description" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Post Job</button>
+    </form>
+
+    <hr>
+
+    <h4>Your Posted Jobs</h4>
+    {% for job in jobs %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5>{{ job.title }}</h5>
+            <p>{{ job.description }}</p>
+            <p><strong>Category:</strong> {{ job.category }} |
+               <strong>Location:</strong> {{ job.location }} |
+               <strong>Salary:</strong> {{ job.salary }}</p>
+
+            <!-- Edit and Delete Buttons -->
+            <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ job.id }}">Edit</a>
+            <a href="{{ url_for('employer_delete_job', job_id=job.id) }}" class="btn btn-sm btn-danger">Delete</a>
+        </div>
+
+        <!-- Applicants Section -->
+        <div class="card-footer">
+            <h6>Applicants:</h6>
+            {% if job.applications %}
+                {% for app in job.applications %}
+                <div class="border rounded p-2 mb-2">
+                    <p><strong>Name:</strong> {{ app.seeker.username }}</p>
+                    <p><strong>Email:</strong> {{ app.seeker.email }}</p>
+                    <a href="{{ url_for('download_resume', filename=app.resume) }}" target="_blank" class="btn btn-sm btn-outline-primary">View Resume (PDF)</a>
+                    <form action="{{ url_for('employer_delete_application', application_id=app.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this application?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No applications yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal{{ job.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ job.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <form method="POST" action="{{ url_for('edit_job', job_id=job.id) }}">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel{{ job.id }}">Edit Job</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <input type="text" name="title" value="{{ job.title }}" class="form-control mb-2" required>
+                  <input type="text" name="category" value="{{ job.category }}" class="form-control mb-2" required>
+                  <input type="text" name="location" value="{{ job.location }}" class="form-control mb-2" required>
+                  <input type="text" name="salary" value="{{ job.salary }}" class="form-control mb-2" required>
+                  <textarea name="description" class="form-control mb-2" rows="3" required>{{ job.description }}</textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+            </div>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <p>No jobs posted yet.</p>
+    {% endfor %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
