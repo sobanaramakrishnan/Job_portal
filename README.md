@@ -73,7 +73,7 @@ Add other packages like `Flask-SQLAlchemy`, `python-dotenv`, etc., if used.
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/yourusername/job-portal.git
+git remote add origin https://github.com/sobana/job-portal.git
 git push -u origin main
 ```
 
